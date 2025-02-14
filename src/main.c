@@ -132,12 +132,11 @@ static void UpdateCSMname(void) {
 }
 
 int main() {
-    CSM_RAM *save_cmpc;
     char dummy[sizeof(MAIN_CSM)];
     UpdateCSMname();
     InitConfig();
     LockSched();
-    save_cmpc = CSM_root()->csm_q->current_msg_processing_csm;
+    CSM_RAM *save_cmpc = CSM_root()->csm_q->current_msg_processing_csm;
     CSM_root()->csm_q->current_msg_processing_csm = CSM_root()->csm_q->csm.first;
     CSM_ID = CreateCSM(&MAINCSM.maincsm, dummy, 0);
     CSM_root()->csm_q->current_msg_processing_csm = save_cmpc;

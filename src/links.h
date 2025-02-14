@@ -1,7 +1,7 @@
 #pragma once
 
 typedef struct {
-    int enabled;
+    int enable;
     char value[128];
     char icon[128];
     int v_indent_next_link;

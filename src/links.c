@@ -2,13 +2,13 @@
 #include "links.h"
 
 int CopyData(LINK_LIST *link) {
-    extern int CFG_LINK_ENABLED;
+    extern int CFG_LINK_ENABLE;
     extern char CFG_LINK_VALUE[], CFG_LINK_ICON[];
     extern int CFG_LINK_V_INDENT_NEXT_LINK;
 
-    if (CFG_LINK_ENABLED) {
+    if (CFG_LINK_ENABLE) {
         link->link = malloc(sizeof(LINK));
-        link->link->enabled = CFG_LINK_ENABLED;
+        link->link->enable = CFG_LINK_ENABLE;
         strcpy(link->link->value, CFG_LINK_VALUE);
         strcpy(link->link->icon, CFG_LINK_ICON);
         link->link->v_indent_next_link = CFG_LINK_V_INDENT_NEXT_LINK;
@@ -46,7 +46,7 @@ int LoadLinks(LINK_LIST *links) {
         }
         Sie_FS_DestroyFiles(files);
     } else {
-        sprintf(path, "%s01.bcfg", CFG_CONFIGS_PATH);
+        sprintf(path, "%s00.bcfg", CFG_CONFIGS_PATH);
         if (Sie_Config_Load(path, __CONFIG(1, cfghdr_link_0))) {
             if (CopyData(links)) {
                 loaded = 1;
