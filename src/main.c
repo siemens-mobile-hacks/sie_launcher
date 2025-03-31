@@ -52,7 +52,9 @@ static int OnMessage(CSM_RAM *data, GBS_MSG *msg) {
     else if (msg->msg == MSG_IPC) {
         IPC_REQ *ipc = msg->data0;
         if (strcmpi(ipc->name_to, "IdleUpd") == 0) {
-            DrawPanel(csm->links, csm->item_n);
+            if (IsIdleUiOnTop()) {
+                DrawPanel(csm->links, csm->item_n);
+            }
         } else if (strcmpi(ipc->name_to, IPC_NAME) == 0) {
             IPC_DATA *ipc_data = ipc->data;
             if (msg->submess == IPC_NAVIGATE) {
