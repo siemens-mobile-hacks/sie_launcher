@@ -1,4 +1,3 @@
-#include <swilib.h>
 #include <cfg_items.h>
 
 __CFG_BEGIN(0)
@@ -8,7 +7,11 @@ __root char CFG_CONFIGS_PATH[128] = "0:\\zbin\\etc\\SieLauncher\\";
 
 __root CFG_HDR cfghdr_1 = {CFG_LEVEL, "Panel", 1, 0};
     __root CFG_HDR cfghdr_1_1 = {CFG_UINT, "Width", 0, 320 - 1};
+#ifdef ELKA
     __root unsigned int CFG_PANEL_WIDTH = 60;
+#else
+    __root unsigned int CFG_PANEL_WIDTH = 30;
+#endif
     __root CFG_HDR cfghdr_1_2 = {CFG_COLOR, "Background color", 0, 0};
     __root char CFG_PANEL_BG_COLOR[] = {0x00, 0x00, 0x00, 0x50};
     __root CFG_HDR cfghdr_1_3 = {CFG_COLOR, "Border color", 0, 0};
