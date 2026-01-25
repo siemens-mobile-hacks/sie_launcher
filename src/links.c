@@ -1,17 +1,14 @@
 #include <sie/sie.h>
 #include "links.h"
+#include "config.h"
 
-int CopyData(LINK_LIST *link) {
-    extern int CFG_LINK_ENABLE;
-    extern char CFG_LINK_VALUE[], CFG_LINK_ICON[];
-    extern int CFG_LINK_V_INDENT_NEXT_LINK;
-
-    if (CFG_LINK_ENABLE) {
+int CopyData(LINK_LIST *link, const CFG_LINK *cfg_link) {
+    if (cfg_link->enable) {
         link->link = malloc(sizeof(LINK));
-        link->link->enable = CFG_LINK_ENABLE;
-        strcpy(link->link->value, CFG_LINK_VALUE);
-        strcpy(link->link->icon, CFG_LINK_ICON);
-        link->link->v_indent_next_link = CFG_LINK_V_INDENT_NEXT_LINK;
+        link->link->enable = cfg_link->enable;
+        strcpy(link->link->value, cfg_link->value);
+        strcpy(link->link->icon, cfg_link->icon);
+        link->link->v_indent_next_link = cfg_link->v_indent_next_link;
         link->next = malloc(sizeof(LINK_LIST));
         return 1;
     }
@@ -19,20 +16,30 @@ int CopyData(LINK_LIST *link) {
 }
 
 int LoadLinks(LINK_LIST *links) {
-    extern char CFG_CONFIGS_PATH[];
-    __CONFIG_EXTERN(1, cfghdr_link_0);
+    CFG_LINK cfg_link = {
+        {CFG_CHECKBOX, "Enable", 0, 2},
+        1,
+        {CFG_STR_UTF8, "Name", 0, 127},
+        "Main menu",
+        {CFG_STR_UTF8, "Value", 0, 127},
+        "MAIN_MENU",
+        {CFG_STR_UTF8, "Icon", 0, 127},
+        "",
+        {CFG_UINT, "Vertical indent of next link", 0, 100},
+        14,
+    };
 
     int loaded = 0;
     char mask[128], path[256];
-    sprintf(mask, "%s*.bcfg", CFG_CONFIGS_PATH);
+    sprintf(mask, "%s*.bcfg", CFG.configs_path);
     SIE_FILE *files = Sie_FS_FindFiles(mask);
     if (files) {
         SIE_FILE *file = Sie_FS_SortFilesByNameAsc(files, 0);
         LINK_LIST *last = NULL;
         while (file) {
             sprintf(path, "%s%s", file->dir_name, file->file_name);
-            if (Sie_Config_Load(path, __CONFIG(1, cfghdr_link_0))) {
-                if (CopyData(links)) {
+            if (BCFG_LoadConfig(path, &cfg_link, sizeof(CFG_LINK)) != -1) {
+                if (CopyData(links, &cfg_link)) {
                     last = links;
                     links = links->next;
                     loaded++;
@@ -46,9 +53,9 @@ int LoadLinks(LINK_LIST *links) {
         }
         Sie_FS_DestroyFiles(files);
     } else {
-        sprintf(path, "%s00.bcfg", CFG_CONFIGS_PATH);
-        if (Sie_Config_Load(path, __CONFIG(1, cfghdr_link_0))) {
-            if (CopyData(links)) {
+        sprintf(path, "%s00.bcfg", CFG.configs_path);
+        if (BCFG_SaveConfig(path, &cfg_link, sizeof(CFG_LINK)) != -1) {
+            if (CopyData(links, &cfg_link)) {
                 loaded = 1;
                 mfree(links->next);
                 links->next = NULL;

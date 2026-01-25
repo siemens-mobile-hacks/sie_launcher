@@ -3,8 +3,8 @@
 #include <string.h>
 #include <sie/exec.h>
 #include "ipc.h"
-#include "idle.h"
 #include "links.h"
+#include "config.h"
 #include "keyhook.h"
 #include "conf_loader.h"
 #include "ui/panel.h"
@@ -37,14 +37,14 @@ static void ReloadLinks(MAIN_CSM *csm) {
 }
 
 static int OnMessage(CSM_RAM *data, GBS_MSG *msg) {
-    extern char CFG_PATH[], CFG_CONFIGS_PATH[];
+    extern char CFG_PATH[];
 
     MAIN_CSM *csm = (MAIN_CSM *)data;
     if (msg->msg == MSG_RECONFIGURE_REQ) {
         if (strcmp(CFG_PATH, msg->data0) == 0) {
             InitConfig();
             ShowMSG(1, (int)"SieLauncher config updated!");
-        } else if (strncmp(CFG_CONFIGS_PATH, msg->data0, strlen(CFG_CONFIGS_PATH)) == 0) {
+        } else if (strncmp(CFG.configs_path, msg->data0, strlen(CFG.configs_path)) == 0) {
             ReloadLinks(csm);
             ShowMSG(1, (int)"SieLauncher reloaded links!");
         }

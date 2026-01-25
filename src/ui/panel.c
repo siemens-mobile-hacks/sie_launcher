@@ -1,9 +1,6 @@
 #include <swilib.h>
 #include "../links.h"
-
-extern int CFG_PANEL_WIDTH;
-extern char CFG_PANEL_BG_COLOR[], CFG_PANEL_BORDER_COLOR[];
-extern char CFG_PANEL_CURSOR_BG_COLOR[], CFG_PANEL_CURSOR_BORDER_COLOR[];
+#include "../config.h"
 
 void DrawPanel(LINK_LIST *links, int item_n) {
     const int x_panel = -1;
@@ -12,11 +9,11 @@ void DrawPanel(LINK_LIST *links, int item_n) {
 #else
     const int y_panel = 20;
 #endif
-    const int x2_panel = CFG_PANEL_WIDTH, y2_panel = ScreenH();
+    const int x2_panel = CFG.panel_width, y2_panel = ScreenH();
     void *canvas = BuildCanvas();
     DrawCanvas(canvas, x_panel, y_panel, x2_panel, y2_panel, 1);
     DrawRectangle(x_panel, y_panel, x2_panel, y2_panel, 0,
-        CFG_PANEL_BORDER_COLOR, CFG_PANEL_BG_COLOR);
+        CFG.panel_border_color, CFG.panel_bg_color);
 
     int i = 0;
     LINK_LIST *link = links;
@@ -24,7 +21,7 @@ void DrawPanel(LINK_LIST *links, int item_n) {
     while (link) {
         const int width = GetImgWidth((int)link->link->icon);
         const int height = GetImgHeight((int)link->link->icon);
-        x = (CFG_PANEL_WIDTH - width) / 2 + 1;
+        x = (CFG.panel_width - width) / 2 + 1;
         if (i == item_n) {
             const int x_cursor = 3;
             const int y_cursor = y + (height / 2) - 8;
@@ -34,7 +31,7 @@ void DrawPanel(LINK_LIST *links, int item_n) {
             const int x2_cursor = x_cursor + 1;
 #endif
             DrawRectangle(x_cursor, y_cursor, x2_cursor, y_cursor + 16, 0,
-                         CFG_PANEL_CURSOR_BORDER_COLOR, CFG_PANEL_CURSOR_BG_COLOR);
+                         CFG.panel_cursor_border_color, CFG.panel_cursor_bg_color);
         }
         DrawImg(x, y, (int)link->link->icon);
         y += height + 4 + link->link->v_indent_next_link;
